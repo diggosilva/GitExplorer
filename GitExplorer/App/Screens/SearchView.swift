@@ -1,54 +1,30 @@
+//
+//  SearchView.swift
+//  GitExplorer
+//
+//  Created by Diggo Silva on 14/03/25.
+//
+
+import UIKit
+
+protocol SearchViewDelegate: AnyObject {
+    func didChangeSearchText(to text: String)
+    func didTapSearchButton()
+}
+
 class SearchView: UIView {
     
-    lazy var logoImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        iv.contentMode = .scaleAspectFit
-        iv.image = Images.logo
-        return iv
-    }()
+    lazy var logoImageView = DSViewBuilder.buildImageView(image: Images.logo)
     
-    lazy var titleLabel: UILabel = {
-        let lbl = UILabel()
-        lbl.translatesAutoresizingMaskIntoConstraints = false
-        lbl.text = "Git Explorer"
-        lbl.textAlignment = .center
-        lbl.font = .preferredFont(forTextStyle: .extraLargeTitle)
-        return lbl
-    }()
+    lazy var titleLabel = DSViewBuilder.buildLabel(text: "Git Explorer", textAlignment: .center)
     
-    lazy var searchTextField: UITextField = {
-        let tf = UITextField()
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        tf.placeholder = "Digite o nome do usuário..."
-        tf.layer.borderWidth = 2
-        tf.layer.borderColor = UIColor.systemGray3.cgColor
-        tf.layer.cornerRadius = 8
-        
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: tf.frame.height)) // 10 é o padding
-        tf.leftView = paddingView
-        tf.leftViewMode = .always
-        
-        tf.clearButtonMode = .whileEditing
-        tf.autocorrectionType = .no
-        tf.font = .systemFont(ofSize: 20)
-        return tf
-    }()
+    lazy var searchTextField = DSViewBuilder.buildTextField(placeholder: "Digite o nome do usuário...", selector:  #selector(searchTextChanged(_:)))
     
-    lazy var searchButton: UIButton = {
-        var configuration = UIButton.Configuration.tinted()
-        configuration.title = "Buscar Usuário"
-        configuration.baseBackgroundColor = .systemGreen
-        configuration.baseForegroundColor = .systemGreen
-        configuration.image = SFSymbols.search
-        configuration.imagePlacement = .leading
-        configuration.imagePadding = 8
-        
-        let button = UIButton(configuration: configuration)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(searchButtonTapped), for: .touchUpInside)
-        return button
-    }()
+    lazy var searchButton = DSViewBuilder.buildButton(
+        title: "Buscar Usuário", color: .systemGreen, image: SFSymbols.search, isEnabled: false, selector: #selector(searchButtonTapped)
+    )
+    
+    weak var delegate: SearchViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,8 +33,12 @@ class SearchView: UIView {
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
+    @objc private func searchTextChanged(_ textField: UITextField) {
+        delegate?.didChangeSearchText(to: textField.text ?? "")
+    }
+    
     @objc private func searchButtonTapped() {
-        print("Clicou no botão de buscar")
+        delegate?.didTapSearchButton()
     }
     
     private func setupView() {
@@ -97,8 +77,3 @@ class SearchView: UIView {
         ])
     }
 }
-
-#Preview {
-    SearchViewController()
-}
-

@@ -9,12 +9,19 @@ import UIKit
 
 class SearchViewController: UIViewController {
     
+    let searchView = SearchView()
+    let viewModel = SearchViewModel()
+    
+    override func loadView() {
+        super.loadView()
+        view = searchView
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
         configureNavigationBar()
         configureDelegatesAndDataSources()
+        handleStates()
     }
     
     private func configureNavigationBar() {
@@ -22,6 +29,66 @@ class SearchViewController: UIViewController {
     }
     
     private func configureDelegatesAndDataSources() {
-        
+        searchView.delegate = self
+        searchView.searchTextField.delegate = self
+    }
+    
+    private func handleStates() {
+        viewModel.state.bind { state in
+            
+            switch state {
+            case .searching:
+                self.showSearchingState()
+                
+            case .founded:
+                self.showFoundedState()
+                
+            case .notFound:
+                self.showNotFoundState()
+            }
+        }
+    }
+    
+    private func showSearchingState() {
+        print("DEBUG: Procurando")
+        #warning("TODO: Animar")
+    }
+    
+    private func showFoundedState() {
+        print("DEBUG: Encontrado")
+        #warning("TODO: Abrir Perfil do Usuário")
+    }
+    
+    private func showNotFoundState() {
+        presentDSAlert(title: "Ops... algo deu errado!", message: DSError.invalidUsername.rawValue)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+    
+    private func pushProfileViewController(/*with user: User*/) {
+        viewModel.username = searchView.searchTextField.text ?? ""
+        viewModel.fetchUser()
+    }
+}
+
+extension SearchViewController: SearchViewDelegate, UITextFieldDelegate {
+    func didChangeSearchText(to text: String) {
+        if text.trimmingCharacters(in: .whitespaces).isEmpty {
+            searchView.searchButton.isEnabled = false
+        } else {
+            searchView.searchButton.isEnabled = true
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        pushProfileViewController()
+        return true
+    }
+    
+    
+    func didTapSearchButton() {
+        pushProfileViewController()
     }
 }

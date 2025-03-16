@@ -1,3 +1,23 @@
+//
+//  SearchViewModel.swift
+//  GitExplorer
+//
+//  Created by Diggo Silva on 14/03/25.
+//
+
+import Foundation
+
+enum SearchViewControllerStates {
+    case searching
+    case founded
+    case notFound
+}
+
+protocol SearchViewModelProtocol {
+    func searchUser(completion: @escaping(Result<String, DSError>) -> Void)
+    func fetchUser()
+}
+
 class SearchViewModel: SearchViewModelProtocol {
     
     var state: Bindable<SearchViewControllerStates> = Bindable(value: .searching)
@@ -11,6 +31,7 @@ class SearchViewModel: SearchViewModelProtocol {
     }
     
     var username: String = ""
+    var user: User?
     
     private let service: ServiceProtocol!
     
@@ -37,12 +58,20 @@ class SearchViewModel: SearchViewModelProtocol {
     
     func fetchUser() {
         service.getUser(with: username) { result in
-            
             switch result {
             case .success(let username):
                 self.username = username.login
-                self.state.value = .founded
+                self.user = username
                 
+                guard let user = self.user else {
+                    print("DEBUG: Usuário não encontrado")
+                    self.state.value = .notFound
+                    return
+                }
+                
+                print("DEBUG: \(user)")
+                self.state.value = .founded
+
             case .failure(let error):
                 print("DEBUG: Error: \(error.rawValue)")
                 self.state.value = .notFound
