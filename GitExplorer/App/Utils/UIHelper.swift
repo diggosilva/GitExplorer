@@ -5,6 +5,7 @@
 //  Created by Diggo Silva on 15/03/25.
 //
 
+import UIKit
 
 enum DSViewBuilder {
     static func buildImageView(image: UIImage? = Images.logo) -> UIImageView {
@@ -38,6 +39,7 @@ enum DSViewBuilder {
         
         textField.clearButtonMode = .whileEditing
         textField.autocorrectionType = .no
+        textField.returnKeyType = .go
         textField.font = .systemFont(ofSize: 20)
         
         textField.addTarget(self, action: selector, for: .editingChanged)
