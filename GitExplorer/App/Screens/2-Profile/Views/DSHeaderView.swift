@@ -5,15 +5,16 @@
 //  Created by Diggo Silva on 16/03/25.
 //
 
+import UIKit
 
 class DSHeaderView: UIView {
     
     lazy var avatarImageView = DSViewBuilder.buildImageView(image: Images.avatar)
-    lazy var loginLabel = DSViewBuilder.buildLabel(text: "Jobs-iOS")
-    lazy var nameLabel = DSViewBuilder.buildLabel(text: "Steve Jobs", textColor: .secondaryLabel, font: .preferredFont(forTextStyle: .headline))
+    lazy var loginLabel = DSViewBuilder.buildLabel()
+    lazy var nameLabel = DSViewBuilder.buildLabel(textColor: .secondaryLabel, font: .preferredFont(forTextStyle: .headline))
     lazy var locationImage = DSViewBuilder.buildImageView(image: SFSymbols.location?.withTintColor(.secondaryLabel, renderingMode: .alwaysOriginal))
-    lazy var locationLabel = DSViewBuilder.buildLabel(text: "San Francisco, CA", textColor: .secondaryLabel, font: .preferredFont(forTextStyle: .headline))
-    lazy var bioLabel = DSViewBuilder.buildLabel(text: "Co-founder, Chairman, and CEO of Apple Inc and Next Step Media. Co-founder, Chairman, and CEO of Apple Inc and Next Step Media.", textColor: .secondaryLabel, font: .preferredFont(forTextStyle: .body), numberOfLines: 3)
+    lazy var locationLabel = DSViewBuilder.buildLabel(textColor: .secondaryLabel, font: .preferredFont(forTextStyle: .headline))
+    lazy var bioLabel = DSViewBuilder.buildLabel(textColor: .secondaryLabel, font: .preferredFont(forTextStyle: .body), numberOfLines: 3)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -71,7 +72,7 @@ class DSHeaderView: UIView {
             bioLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 15),
             bioLabel.leadingAnchor.constraint(equalTo: avatarImageView.leadingAnchor),
             bioLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-            bioLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -padding)
+            bioLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 }

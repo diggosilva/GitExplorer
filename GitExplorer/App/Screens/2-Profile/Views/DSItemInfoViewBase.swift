@@ -1,5 +1,5 @@
 //
-//  DSItemInfoView.swift
+//  DSItemInfoViewBase.swift
 //  GitExplorer
 //
 //  Created by Diggo Silva on 16/03/25.
@@ -8,19 +8,22 @@
 import UIKit
 
 class DSItemInfoViewBase: UIView {
-   
+    
     //MARK: Propriedades configuráveis
     private let leftIcon: UIImage?
     private let leftTitle: String
     private let leftCount: String
+    
     private let rightIcon: UIImage?
     private let rightTitle: String
     private let rightCount: String
+    
     private let buttonTitle: String
     private let buttonColor: UIColor
     private let buttonImage: UIImage?
     private let buttonAction: Selector
-    private let additionalLabelText: String? // Para o caso do createdAtLabel opcional
+    
+    private let additionalLabelText: String?
     
     //MARK: Componentes UI
     lazy var symbolImageViewOne = DSViewBuilder.buildIconImageView(image: leftIcon)
@@ -43,7 +46,7 @@ class DSItemInfoViewBase: UIView {
     
     lazy var additionalLabel: UILabel? = {
         guard let text = additionalLabelText else { return nil }
-        return DSViewBuilder.buildLabel(text: text, textColor: .secondaryLabel, textAlignment: .center, font: .preferredFont(forTextStyle: .headline))
+        return DSViewBuilder.buildLabel(text: text, textColor: .secondaryLabel, textAlignment: .center, font: .preferredFont(forTextStyle: .body))
     }()
     
     //MARK: Inicializador customizado

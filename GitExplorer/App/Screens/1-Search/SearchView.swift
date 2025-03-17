@@ -52,7 +52,8 @@ class SearchView: UIView {
     }
     
     private func setConstraints() {
-        let padding: CGFloat = 20
+        let padding: CGFloat = 50
+        
         NSLayoutConstraint.activate([
             logoImageView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             logoImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -68,12 +69,10 @@ class SearchView: UIView {
             searchTextField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 50),
             searchTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             searchTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-            searchTextField.heightAnchor.constraint(equalToConstant: 50),
             
             searchButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -100),
             searchButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             searchButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-            searchButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
 }

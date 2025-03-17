@@ -16,12 +16,24 @@ enum DSViewBuilder {
         return imageView
     }
     
-    static func buildLabel(text: String, textAlignment: NSTextAlignment = .center, font: UIFont = .preferredFont(forTextStyle: .extraLargeTitle)) -> UILabel {
+    static func buildIconImageView(image: UIImage? = Images.logo) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = image?.withTintColor(.label, renderingMode: .alwaysOriginal)
+        return imageView
+    }
+    
+    static func buildLabel(text: String = "", textColor: UIColor = .label, textAlignment: NSTextAlignment = .left, font: UIFont = .preferredFont(forTextStyle: .extraLargeTitle), numberOfLines: Int = 1) -> UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = text
+        label.textColor = textColor
         label.textAlignment = textAlignment
         label.font = font
+        label.numberOfLines = numberOfLines
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.75
         return label
     }
     
@@ -41,6 +53,7 @@ enum DSViewBuilder {
         textField.autocorrectionType = .no
         textField.returnKeyType = .go
         textField.font = .systemFont(ofSize: 20)
+        textField.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         textField.addTarget(self, action: selector, for: .editingChanged)
         return textField
@@ -58,7 +71,18 @@ enum DSViewBuilder {
         let button = UIButton(configuration: configuration)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.isEnabled = isEnabled
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
         button.addTarget(self, action: selector, for: .touchUpInside)
         return button
+    }
+    
+    static func buildStackView(arrangedSubviews: [UIView], axis: NSLayoutConstraint.Axis = .horizontal, distribution: UIStackView.Distribution = .fill, alignment: UIStackView.Alignment = .center) -> UIStackView {
+        let sv = UIStackView(arrangedSubviews: arrangedSubviews)
+        sv.translatesAutoresizingMaskIntoConstraints = false
+        sv.axis = axis
+        sv.distribution = distribution
+        sv.alignment = alignment
+        sv.spacing = 8
+        return sv
     }
 }

@@ -1,3 +1,13 @@
+//
+//  ProfileView.swift
+//  GitExplorer
+//
+//  Created by Diggo Silva on 16/03/25.
+//
+
+import UIKit
+import SDWebImage
+
 class ProfileView: UIView {
     
     lazy var headerView = DSHeaderView()
@@ -12,9 +22,30 @@ class ProfileView: UIView {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     func configure(user: User) {
+        configHeader(user: user)
+        configViewOne(user: user)
+        configViewTwo(user: user)
+    }
+    
+    func configHeader(user: User) {
+        guard let url = URL(string: user.avatarUrl) else { return }
+        
+        headerView.avatarImageView.sd_setImage(with: url)
         headerView.loginLabel.text = user.login
+        headerView.nameLabel.text = user.name
         headerView.locationLabel.text = user.location
         headerView.bioLabel.text = user.bio
+    }
+    
+    func configViewOne(user: User) {
+        infoViewOne.countLabelOne.text = String(user.publicRepos)
+        infoViewOne.countLabelTwo.text = String(user.publicGists)
+    }
+    
+    func configViewTwo(user: User) {
+        infoViewTwo.countLabelOne.text = String(user.followers)
+        infoViewTwo.countLabelTwo.text = String(user.following)
+        infoViewTwo.additionalLabel?.text = "GitHub desde \(user.createdAt.formatDate())"
     }
     
     private func setupView() {
@@ -35,9 +66,9 @@ class ProfileView: UIView {
             headerView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             headerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            headerView.heightAnchor.constraint(equalToConstant: 200),
+            headerView.heightAnchor.constraint(lessThanOrEqualToConstant: 200),
             
-            infoViewOne.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: padding),
+            infoViewOne.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 10),
             infoViewOne.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             infoViewOne.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
             infoViewOne.heightAnchor.constraint(equalToConstant: heightInfoView),
