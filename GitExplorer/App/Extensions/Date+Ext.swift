@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+extension Date {
+    func formatDate() -> String {
+        return formatted(.dateTime.month().year())
+    }
+}

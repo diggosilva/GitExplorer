@@ -19,13 +19,15 @@ class SearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureNavigationBar()
         configureDelegatesAndDataSources()
         handleStates()
     }
     
-    private func configureNavigationBar() {
-        title = "Buscar Usuário"
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        searchView.searchButton.isEnabled = false
+        searchView.searchTextField.text = ""
+        searchView.searchTextField.becomeFirstResponder()
     }
     
     private func configureDelegatesAndDataSources() {
@@ -55,8 +57,16 @@ class SearchViewController: UIViewController {
     }
     
     private func showFoundedState() {
-        print("DEBUG: Encontrado")
-        #warning("TODO: Abrir Perfil do Usuário")
+        guard let user = viewModel.user else {
+            presentDSAlert(title: "Ops... algo deu errado!", message: DSError.invalidUsername.rawValue)
+            return
+        }
+        
+        let profileVC = ProfileViewController(viewModel: ProfileViewModel(user: user))
+//        let navBar = UINavigationController(rootViewController: profileVC)
+//        present(navBar, animated: true)
+        
+        navigationController?.pushViewController(profileVC, animated: true)
     }
     
     private func showNotFoundState() {
@@ -67,7 +77,7 @@ class SearchViewController: UIViewController {
         view.endEditing(true)
     }
     
-    private func pushProfileViewController(/*with user: User*/) {
+    private func pushProfileViewController() {
         viewModel.username = searchView.searchTextField.text ?? ""
         viewModel.fetchUser()
     }
@@ -86,7 +96,6 @@ extension SearchViewController: SearchViewDelegate, UITextFieldDelegate {
         pushProfileViewController()
         return true
     }
-    
     
     func didTapSearchButton() {
         pushProfileViewController()

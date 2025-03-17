@@ -1,21 +1,21 @@
 //
-//  ProfileViewModelProtocol.swift
+//  ProfileViewModel.swift
 //  GitExplorer
 //
 //  Created by Diggo Silva on 16/03/25.
 //
 
+import Foundation
 
-//MARK: VIEW MODEL
 protocol ProfileViewModelProtocol {
-    var user: User? { get }
+    var user: User { get }
 }
 
 class ProfileViewModel: ProfileViewModelProtocol {
     
-    let user: User?
+    let user: User
     
-    init(user: User? = nil) {
+    init(user: User) {
         self.user = user
     }
 }
