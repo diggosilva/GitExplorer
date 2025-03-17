@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		925B7F202D8758B600F1DF5D /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 925B7F1F2D8758B600F1DF5D /* SDWebImage */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		92368BDF2D837D2300F075F9 /* GitExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				925B7F202D8758B600F1DF5D /* SDWebImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = GitExplorer;
 			packageProductDependencies = (
+				925B7F1F2D8758B600F1DF5D /* SDWebImage */,
 			);
 			productName = GitExplorer;
 			productReference = 92368BDF2D837D2300F075F9 /* GitExplorer.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 92368BD62D837D2300F075F9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				925B7F1E2D8758B600F1DF5D /* XCRemoteSwiftPackageReference "SDWebImage" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 92368BE02D837D2300F075F9 /* Products */;
 			projectDirPath = "";
@@ -333,6 +342,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		925B7F1E2D8758B600F1DF5D /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.21.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		925B7F1F2D8758B600F1DF5D /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 925B7F1E2D8758B600F1DF5D /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 92368BD72D837D2300F075F9 /* Project object */;
 }
