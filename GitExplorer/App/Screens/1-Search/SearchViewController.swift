@@ -51,10 +51,7 @@ class SearchViewController: UIViewController {
         }
     }
     
-    private func showSearchingState() {
-        print("DEBUG: Procurando")
-        #warning("TODO: Animar")
-    }
+    private func showSearchingState() {}
     
     private func showFoundedState() {
         guard let user = viewModel.user else {
@@ -78,8 +75,8 @@ class SearchViewController: UIViewController {
     }
     
     private func pushProfileViewController() {
-        viewModel.username = searchView.searchTextField.text ?? ""
-        viewModel.fetchUser()
+        let username = searchView.searchTextField.text ?? ""
+        viewModel.fetchUser(username: username)
     }
 }
 

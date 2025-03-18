@@ -10,7 +10,7 @@ import UIKit
 class ProfileViewController: UIViewController {
     
     let profileView = ProfileView()
-    let viewModel: ProfileViewModelProtocol
+    var viewModel: ProfileViewModelProtocol
     
     init(viewModel: ProfileViewModelProtocol) {
         self.viewModel = viewModel
@@ -51,7 +51,9 @@ class ProfileViewController: UIViewController {
 
 extension ProfileViewController: DSItemInfoViewOneDelegate, DSItemInfoViewTwoDelegate {
     func didTapRepoButton() {
-        print("DEBUG: Mostrar Repositórios")
+        let user = viewModel.user
+        let repoVC = RepositoriesViewController(viewModel: RepositoriesViewModel(user: user))
+        navigationController?.pushViewController(repoVC, animated: true)
     }
     
     func didTapProfileButton() {

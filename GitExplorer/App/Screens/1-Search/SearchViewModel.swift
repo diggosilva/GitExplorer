@@ -15,7 +15,7 @@ enum SearchViewControllerStates {
 
 protocol SearchViewModelProtocol {
     func searchUser(completion: @escaping(Result<String, DSError>) -> Void)
-    func fetchUser()
+    func fetchUser(username: String)
 }
 
 class SearchViewModel: SearchViewModelProtocol {
@@ -24,17 +24,16 @@ class SearchViewModel: SearchViewModelProtocol {
     
     var searchButtonEnabled: Bool = false
     
+    var user: User?
+    
+    private let service: ServiceProtocol!
+    
     var searchText: String = "" {
         didSet {
             searchButtonEnabled = !searchText.isEmpty
         }
     }
-    
-    var username: String = ""
-    var user: User?
-    
-    private let service: ServiceProtocol!
-    
+
     init(service: ServiceProtocol = Service()) {
         self.service = service
     }
@@ -56,20 +55,15 @@ class SearchViewModel: SearchViewModelProtocol {
         state.value = .founded
     }
     
-    func fetchUser() {
-        service.getUser(with: username) { result in
+    func fetchUser(username: String) {
+        state.value = .searching
+        
+        service.getUser(with: username) { [weak self] result in
+            guard let self = self else { return }
+            
             switch result {
-            case .success(let username):
-                self.username = username.login
-                self.user = username
-                
-                guard let user = self.user else {
-                    print("DEBUG: Usuário não encontrado")
-                    self.state.value = .notFound
-                    return
-                }
-                
-                print("DEBUG: \(user)")
+            case .success(let user):
+                self.user = user
                 self.state.value = .founded
 
             case .failure(let error):

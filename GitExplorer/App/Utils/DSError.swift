@@ -15,4 +15,5 @@ enum DSError: String, Error {
     case invalidSearchEmpty = "Digite um nome de usuário para realizar a busca."
     case invalidSearchWhiteSpace = "O campo de busca não pode conter espaços em branco."
     case searchFailed = "Não foi possível encontrar o usuário."
+    case reposFailed = "Não foi possível carregar os repositórios. Tente novamente."
 }
