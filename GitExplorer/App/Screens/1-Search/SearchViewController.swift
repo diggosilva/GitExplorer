@@ -60,9 +60,6 @@ class SearchViewController: UIViewController {
         }
         
         let profileVC = ProfileViewController(viewModel: ProfileViewModel(user: user))
-//        let navBar = UINavigationController(rootViewController: profileVC)
-//        present(navBar, animated: true)
-        
         navigationController?.pushViewController(profileVC, animated: true)
     }
     
