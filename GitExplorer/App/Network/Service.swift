@@ -14,10 +14,8 @@ protocol ServiceProtocol {
 
 final class Service: ServiceProtocol {
     
-    let baseURL = "https://api.github.com/users/"
-    
     func getUser(with username: String, completion: @escaping (Result<User, DSError>) -> Void) {
-        guard let url = URL(string: baseURL + username) else { return }
+        guard let url = createURL(for: .user(username)) else { return }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             DispatchQueue.main.async {
@@ -47,6 +45,7 @@ final class Service: ServiceProtocol {
                         location: response.location,
                         bio: response.bio,
                         url: response.url,
+                        htmlURL: response.htmlURL,
                         publicRepos: response.publicRepos,
                         publicGists: response.publicGists,
                         followers: response.followers,
@@ -65,7 +64,7 @@ final class Service: ServiceProtocol {
     }
     
     func getRepos(with url: String, completion: @escaping(Result<[Repo], DSError>) -> Void) {
-        guard let url = URL(string: url + "/repos") else { return }
+        guard let url = createURL(for: .userRepos(url)) else { return }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             DispatchQueue.main.async {
@@ -111,5 +110,14 @@ final class Service: ServiceProtocol {
             }
         }
         task.resume()
+    }
+    
+    // Função para criar a URL com base no tipo de endpoint
+    func createURL(for endpoint: GitHubEndpoint) -> URL? {
+        var urlComponents = URLComponents()
+        urlComponents.scheme = "https"
+        urlComponents.host = "api.github.com"
+        urlComponents.path = endpoint.path
+        return urlComponents.url
     }
 }
