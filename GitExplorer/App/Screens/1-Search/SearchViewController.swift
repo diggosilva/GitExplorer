@@ -39,14 +39,9 @@ class SearchViewController: UIViewController {
         viewModel.state.bind { state in
             
             switch state {
-            case .searching:
-                self.showSearchingState()
-                
-            case .founded:
-                self.showFoundedState()
-                
-            case .notFound:
-                self.showNotFoundState()
+            case .searching: self.showSearchingState()
+            case .founded: self.showFoundedState()
+            case .notFound: self.showNotFoundState()
             }
         }
     }
