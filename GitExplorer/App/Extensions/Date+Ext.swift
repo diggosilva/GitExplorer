@@ -11,4 +11,8 @@ extension Date {
     func formatDate() -> String {
         return formatted(.dateTime.month().year())
     }
+    
+    func formatDateDMY() -> String {
+        return formatted(.dateTime.day().month().year())
+    }
 }

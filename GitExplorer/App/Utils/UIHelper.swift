@@ -76,13 +76,14 @@ enum DSViewBuilder {
         return button
     }
     
-    static func buildStackView(arrangedSubviews: [UIView], axis: NSLayoutConstraint.Axis = .horizontal, distribution: UIStackView.Distribution = .fill, alignment: UIStackView.Alignment = .center) -> UIStackView {
+    static func buildStackView(arrangedSubviews: [UIView], axis: NSLayoutConstraint.Axis = .horizontal, distribution: UIStackView.Distribution = .fill, alignment: UIStackView.Alignment = .center, spacing: CGFloat = 8, backgroundColor: UIColor? = nil) -> UIStackView {
         let sv = UIStackView(arrangedSubviews: arrangedSubviews)
         sv.translatesAutoresizingMaskIntoConstraints = false
         sv.axis = axis
         sv.distribution = distribution
         sv.alignment = alignment
-        sv.spacing = 8
+        sv.spacing = spacing
+        sv.backgroundColor = backgroundColor
         return sv
     }
 }

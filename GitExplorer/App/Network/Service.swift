@@ -9,25 +9,22 @@ import Foundation
 
 protocol ServiceProtocol {
     func getUser(with username: String, completion: @escaping (Result<User, DSError>) -> Void)
+    func getRepos(with username: String, completion: @escaping(Result<[Repo], DSError>) -> Void)
 }
 
 final class Service: ServiceProtocol {
     
-    let baseURL = "https://api.github.com/users/"
-    
     func getUser(with username: String, completion: @escaping (Result<User, DSError>) -> Void) {
-        guard let url = URL(string: baseURL + username) else { return }
+        guard let url = createURL(for: .user(username)) else { return }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             DispatchQueue.main.async {
-                
                 if error != nil {
                     completion(.failure(.invalidUsername))
                     return
                 }
                 
-                guard let response = response as? HTTPURLResponse,
-                      response.statusCode == 200 else {
+                guard let response = response as? HTTPURLResponse else {
                     completion(.failure(.unableToComplete))
                     return
                 }
@@ -47,7 +44,8 @@ final class Service: ServiceProtocol {
                         name: response.name,
                         location: response.location,
                         bio: response.bio,
-                        htmlUrl: response.htmlURL,
+                        url: response.url,
+                        htmlURL: response.htmlURL,
                         publicRepos: response.publicRepos,
                         publicGists: response.publicGists,
                         followers: response.followers,
@@ -63,5 +61,63 @@ final class Service: ServiceProtocol {
             }
         }
         task.resume()
+    }
+    
+    func getRepos(with url: String, completion: @escaping(Result<[Repo], DSError>) -> Void) {
+        guard let url = createURL(for: .userRepos(url)) else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            DispatchQueue.main.async {
+                if error != nil {
+                    completion(.failure(.reposFailed))
+                    return
+                }
+                
+                guard let response = response as? HTTPURLResponse else {
+                    completion(.failure(.unableToComplete))
+                    return
+                }
+                
+                print("DEBUG: Status code: \(response.statusCode)")
+                
+                guard let data = data else {
+                    completion(.failure(.invalidData))
+                    return
+                }
+                
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .iso8601
+                    let response = try decoder.decode([ReposResponse].self, from: data)
+                    var repos: [Repo] = []
+                    
+                    for repoResponse in response {
+                        let repo = Repo(name: repoResponse.name,
+                                        repoDescription: repoResponse.description,
+                                        createdAt: repoResponse.createdAt,
+                                        updatedAt: repoResponse.updatedAt,
+                                        stargazersCount: repoResponse.stargazersCount,
+                                        forksCount: repoResponse.forksCount)
+                        repos.append(repo)
+                    }
+                    
+                    completion(.success(repos))
+                    
+                } catch {
+                    print("DEBUG: Erro de decodificação: \(error.localizedDescription)")
+                    completion(.failure(.invalidData))
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    // Função para criar a URL com base no tipo de endpoint
+    func createURL(for endpoint: GitHubEndpoint) -> URL? {
+        var urlComponents = URLComponents()
+        urlComponents.scheme = "https"
+        urlComponents.host = "api.github.com"
+        urlComponents.path = endpoint.path
+        return urlComponents.url
     }
 }
