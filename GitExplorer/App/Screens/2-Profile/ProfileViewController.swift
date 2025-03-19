@@ -26,16 +26,11 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureNavigationBar()
-        configureDelegatesAndDataSources()
+        configureDelegates()
         configureProfileViewWithUser()
     }
     
-    private func configureNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector (dismissProfile))
-    }
-    
-    private func configureDelegatesAndDataSources() {
+    private func configureDelegates() {
         profileView.infoViewOne.delegate = self
         profileView.infoViewTwo.delegate = self
     }
@@ -56,7 +51,11 @@ extension ProfileViewController: DSItemInfoViewOneDelegate, DSItemInfoViewTwoDel
         navigationController?.pushViewController(repoVC, animated: true)
     }
     
-    func didTapProfileButton() {
-        print("DEBUG: Mostrar Perfil do GitHub")
+    func didTapProfileButton() {        
+        let urlString = viewModel.user.htmlURL
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        presentSafari(with: url)
     }
 }
