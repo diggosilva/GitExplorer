@@ -23,8 +23,6 @@ class DSItemInfoViewBase: UIView {
     private let buttonImage: UIImage?
     private let buttonAction: Selector
     
-    private let additionalLabelText: String?
-    
     //MARK: Componentes UI
     lazy var symbolImageViewOne = DSViewBuilder.buildIconImageView(image: leftIcon)
     lazy var titleLabelOne = DSViewBuilder.buildLabel(text: leftTitle, font: .preferredFont(forTextStyle: .headline))
@@ -44,16 +42,10 @@ class DSItemInfoViewBase: UIView {
     
     lazy var actionButton = DSViewBuilder.buildButton(title: buttonTitle, color: buttonColor, image: buttonImage, selector: buttonAction)
     
-    lazy var additionalLabel: UILabel? = {
-        guard let text = additionalLabelText else { return nil }
-        return DSViewBuilder.buildLabel(text: text, textColor: .secondaryLabel, textAlignment: .center, font: .preferredFont(forTextStyle: .body))
-    }()
-    
     //MARK: Inicializador customizado
     init(leftIcon: UIImage?, leftTitle: String, leftCount: String,
          rightIcon: UIImage?, rightTitle: String, rightCount: String,
-         buttonTitle: String, buttonColor: UIColor, buttonImage: UIImage?, buttonAction: Selector,
-         additionalLabelText: String? = nil) {
+         buttonTitle: String, buttonColor: UIColor, buttonImage: UIImage?, buttonAction: Selector) {
         self.leftIcon = leftIcon
         self.leftTitle = leftTitle
         self.leftCount = leftCount
@@ -64,7 +56,6 @@ class DSItemInfoViewBase: UIView {
         self.buttonColor = buttonColor
         self.buttonImage = buttonImage
         self.buttonAction = buttonAction
-        self.additionalLabelText = additionalLabelText
         super.init(frame: .zero)
         setupView()
     }
@@ -78,11 +69,7 @@ class DSItemInfoViewBase: UIView {
     
     private func setHierarchy() {
         backgroundColor = .secondarySystemBackground
-        if let additionalLabel = additionalLabel {
-            addSubviews(HStackViewFINAL, actionButton, additionalLabel)
-        } else {
-            addSubviews(HStackViewFINAL, actionButton)
-        }
+        addSubviews(HStackViewFINAL, actionButton)
     }
     
     private func setConstraints() {
@@ -92,7 +79,7 @@ class DSItemInfoViewBase: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = 10
         
-        var constraints = [
+        NSLayoutConstraint.activate([
             HStackViewFINAL.topAnchor.constraint(equalTo: topAnchor, constant: padding),
             HStackViewFINAL.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             HStackViewFINAL.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
@@ -106,16 +93,6 @@ class DSItemInfoViewBase: UIView {
             actionButton.leadingAnchor.constraint(equalTo: HStackViewFINAL.leadingAnchor),
             actionButton.trailingAnchor.constraint(equalTo: HStackViewFINAL.trailingAnchor),
             actionButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -padding)
-        ]
-        
-        if let additionalLabel = additionalLabel {
-            constraints.append(contentsOf: [
-                additionalLabel.topAnchor.constraint(equalTo: bottomAnchor, constant: padding),
-                additionalLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-                additionalLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
-            ])
-        }
-        
-        NSLayoutConstraint.activate(constraints)
+        ])
     }
 }

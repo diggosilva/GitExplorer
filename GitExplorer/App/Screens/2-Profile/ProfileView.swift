@@ -13,6 +13,7 @@ class ProfileView: UIView {
     lazy var headerView = DSHeaderView()
     lazy var infoViewOne = DSItemInfoViewOne()
     lazy var infoViewTwo = DSItemInfoViewTwo()
+    lazy var dateLabel = DSViewBuilder.buildLabel(textColor: .secondaryLabel, textAlignment: .center, font: .preferredFont(forTextStyle: .body))
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,7 +46,7 @@ class ProfileView: UIView {
     func configViewTwo(user: User) {
         infoViewTwo.countLabelOne.text = String(user.followers)
         infoViewTwo.countLabelTwo.text = String(user.following)
-        infoViewTwo.additionalLabel?.text = "GitHub desde \(user.createdAt.formatDate())"
+        dateLabel.text = "GitHub desde \(user.createdAt.formatDate())"
     }
     
     private func setupView() {
@@ -55,7 +56,7 @@ class ProfileView: UIView {
     
     private func setHierarchy() {
         backgroundColor = .systemBackground
-        addSubviews(headerView, infoViewOne, infoViewTwo)
+        addSubviews(headerView, infoViewOne, infoViewTwo, dateLabel)
     }
     
     private func setConstraints() {
@@ -77,6 +78,10 @@ class ProfileView: UIView {
             infoViewTwo.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             infoViewTwo.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
             infoViewTwo.heightAnchor.constraint(equalToConstant: heightInfoView),
+            
+            dateLabel.topAnchor.constraint(equalTo: infoViewTwo.bottomAnchor, constant: padding),
+            dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
+            dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
         ])
     }
 }
