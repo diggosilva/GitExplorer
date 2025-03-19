@@ -1,10 +1,27 @@
+//
+//  RepositoriesView.swift
+//  GitExplorer
+//
+//  Created by Diggo Silva on 17/03/25.
+//
+
+import UIKit
+
 class RepositoriesView: UIView {
     
-    let tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tv = UITableView()
         tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.separatorStyle = .none
+        tv.backgroundColor = .secondarySystemBackground
         tv.register(RepositoriesCell.self, forCellReuseIdentifier: RepositoriesCell.identifier)
         return tv
+    }()
+    
+    lazy var spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .large)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
     }()
     
     override init(frame: CGRect) {
@@ -21,7 +38,7 @@ class RepositoriesView: UIView {
     
     private func setHierarchy() {
         backgroundColor = .systemBackground
-        addSubviews(tableView)
+        addSubviews(tableView, spinner)
     }
     
     private func setConstraints() {
@@ -29,7 +46,10 @@ class RepositoriesView: UIView {
             tableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
     }
 }
