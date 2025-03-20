@@ -54,17 +54,27 @@ class RepositoriesViewController: UIViewController {
     }
     
     private func showSearchingState() {
-        repoView.spinner.startAnimating()
+        handleSpinner(isLoading: true)
     }
     
     private func showFoundedState() {
-        repoView.spinner.stopAnimating()
-        repoView.tableView.reloadData()
+        handleSpinner(isLoading: false)
+    }
+    
+    private func handleSpinner(isLoading: Bool) {
+        if isLoading {
+            repoView.spinner.startAnimating()
+            repoView.loadingLabel.isHidden = false
+        } else {
+            repoView.spinner.stopAnimating()
+            repoView.loadingLabel.isHidden = true
+            repoView.tableView.reloadData()
+        }
     }
     
     private func showNotFoundState() {
         presentDSAlert(title: "Ops... algo deu errado!", message: DSError.reposFailed.rawValue)
-        repoView.spinner.stopAnimating()
+        handleSpinner(isLoading: false)
     }
 }
 

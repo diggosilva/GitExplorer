@@ -24,6 +24,8 @@ class RepositoriesView: UIView {
         return spinner
     }()
     
+    lazy var loadingLabel = DSViewBuilder.buildLabel(text: "Carregando repositórios...", textColor: .secondaryLabel, textAlignment: .center, font: .preferredFont(forTextStyle: .subheadline))
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -38,10 +40,12 @@ class RepositoriesView: UIView {
     
     private func setHierarchy() {
         backgroundColor = .systemBackground
-        addSubviews(tableView, spinner)
+        addSubviews(tableView, spinner, loadingLabel)
     }
     
     private func setConstraints() {
+        let padding: CGFloat = 8
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -49,7 +53,11 @@ class RepositoriesView: UIView {
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             spinner.centerXAnchor.constraint(equalTo: centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: centerYAnchor)
+            spinner.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            loadingLabel.topAnchor.constraint(equalTo: spinner.bottomAnchor, constant: padding),
+            loadingLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
+            loadingLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
         ])
     }
 }
