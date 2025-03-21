@@ -24,7 +24,7 @@ final class Service: ServiceProtocol {
                     return
                 }
                 
-                guard let response = response as? HTTPURLResponse else {
+                guard let _ = response as? HTTPURLResponse else {
                     completion(.failure(.unableToComplete))
                     return
                 }
@@ -73,12 +73,10 @@ final class Service: ServiceProtocol {
                     return
                 }
                 
-                guard let response = response as? HTTPURLResponse else {
+                guard let _ = response as? HTTPURLResponse else {
                     completion(.failure(.unableToComplete))
                     return
                 }
-                
-                print("DEBUG: Status code: \(response.statusCode)")
                 
                 guard let data = data else {
                     completion(.failure(.invalidData))
@@ -113,7 +111,7 @@ final class Service: ServiceProtocol {
     }
     
     // Função para criar a URL com base no tipo de endpoint
-    func createURL(for endpoint: GitHubEndpoint) -> URL? {
+    private func createURL(for endpoint: GitHubEndpoint) -> URL? {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = "api.github.com"
