@@ -50,6 +50,8 @@ class RepositoriesCell: UITableViewCell {
     
     lazy var HStackStarsForks = DSViewBuilder.buildStackView(arrangedSubviews: [VStackStars, VStackForks], axis: .horizontal, distribution: .fillEqually, alignment: .center, spacing: 1, backgroundColor: .secondaryLabel)
     
+    lazy var arrayViews: [UIView] = [containerView, repoTitle, repoDescription, createAtLabel, createAt, HStackDates, updateAtLabel, updateAt, HStackStarsForks, starImageView, starLabel, starCountLabel, forkImageView, forkLabel, forkCountLabel]
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
@@ -58,6 +60,7 @@ class RepositoriesCell: UITableViewCell {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     func configure(repo: Repo) {
+        showAnimating(alpha: 0)
         repoTitle.text = repo.name
         repoDescription.text = repo.repoDescription
         createAt.text = repo.createdAt.formatDateDMY()
@@ -65,6 +68,13 @@ class RepositoriesCell: UITableViewCell {
         starCountLabel.text = repo.stargazersCount.description
         forkCountLabel.text = repo.forksCount.description
         backgroundColor = .clear
+        showAnimating(alpha: 1)
+    }
+    
+    func showAnimating(alpha: CGFloat) {
+        UIView.animate(withDuration: 0.25) {
+            self.arrayViews.forEach { $0.alpha = alpha }
+        }
     }
     
     private func setupView() {
