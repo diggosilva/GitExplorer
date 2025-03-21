@@ -38,20 +38,18 @@ final class Service: ServiceProtocol {
                     let decoder = JSONDecoder()
                     decoder.dateDecodingStrategy = .iso8601
                     let response = try decoder.decode(UserResponse.self, from: data)
-                    let user = User(
-                        login: response.login,
-                        avatarUrl: response.avatarURL,
-                        name: response.name,
-                        location: response.location,
-                        bio: response.bio,
-                        url: response.url,
-                        htmlURL: response.htmlURL,
-                        publicRepos: response.publicRepos,
-                        publicGists: response.publicGists,
-                        followers: response.followers,
-                        following: response.following,
-                        createdAt: response.createdAt
-                    )
+                    let user = User(login: response.login,
+                                    avatarUrl: response.avatarURL,
+                                    name: response.name,
+                                    location: response.location,
+                                    bio: response.bio,
+                                    url: response.url,
+                                    htmlURL: response.htmlURL,
+                                    publicRepos: response.publicRepos,
+                                    publicGists: response.publicGists,
+                                    followers: response.followers,
+                                    following: response.following,
+                                    createdAt: response.createdAt)
                     completion(.success(user))
                     
                 } catch {

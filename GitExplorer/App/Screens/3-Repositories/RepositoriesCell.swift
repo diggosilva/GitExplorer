@@ -11,14 +11,7 @@ class RepositoriesCell: UITableViewCell {
     
     static let identifier = "RepositoriesCell"
     
-    lazy var containerView: UIView = {
-        let cv = UIView()
-        cv.translatesAutoresizingMaskIntoConstraints = false
-        cv.backgroundColor = .systemBackground
-        cv.layer.cornerRadius = 20
-        cv.clipsToBounds = true
-        return cv
-    }()
+    lazy var containerView = DSViewBuilder.BuildContainerView()
     
     lazy var repoTitle = DSViewBuilder.buildLabel(textAlignment: .center, font: .boldSystemFont(ofSize: 24))
     lazy var repoDescription = DSViewBuilder.buildLabel(textColor: .secondaryLabel, font: .systemFont(ofSize: 17, weight: .medium), numberOfLines: 2)

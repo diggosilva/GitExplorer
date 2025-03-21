@@ -23,9 +23,7 @@ protocol RepositoriesViewModelProtocol {
 class RepositoriesViewModel: RepositoriesViewModelProtocol {
     
     var state: Bindable<RepositoriesViewControllerStates> = Bindable(value: .searching)
-    
     var user: User
-    
     var repos: [Repo] = []
     
     private let service: ServiceProtocol!
