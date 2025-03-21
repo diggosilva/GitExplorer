@@ -15,14 +15,9 @@ protocol SearchViewDelegate: AnyObject {
 class SearchView: UIView {
     
     lazy var logoImageView = DSViewBuilder.buildImageView(image: Images.logo)
-    
     lazy var titleLabel = DSViewBuilder.buildLabel(text: "Git Explorer", textAlignment: .center)
-    
     lazy var searchTextField = DSViewBuilder.buildTextField(placeholder: "Digite o nome do usuário...", selector:  #selector(searchTextChanged(_:)))
-    
-    lazy var searchButton = DSViewBuilder.buildButton(
-        title: "Buscar Usuário", color: .systemGreen, image: SFSymbols.search, isEnabled: false, selector: #selector(searchButtonTapped)
-    )
+    lazy var searchButton = DSViewBuilder.buildButton(title: "Buscar Usuário", image: SFSymbols.search, isEnabled: false, selector: #selector(searchButtonTapped))
     
     weak var delegate: SearchViewDelegate?
     

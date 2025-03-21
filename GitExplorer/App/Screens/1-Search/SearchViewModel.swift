@@ -21,9 +21,7 @@ protocol SearchViewModelProtocol {
 class SearchViewModel: SearchViewModelProtocol {
     
     var state: Bindable<SearchViewControllerStates> = Bindable(value: .searching)
-    
     var searchButtonEnabled: Bool = false
-    
     var user: User?
     
     private let service: ServiceProtocol!

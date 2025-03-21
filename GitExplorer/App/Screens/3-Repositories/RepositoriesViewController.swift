@@ -39,12 +39,10 @@ class RepositoriesViewController: UIViewController {
     private func configureDelegatesAndDataSources() {
         repoView.tableView.delegate = self
         repoView.tableView.dataSource = self
-        
     }
     
     private func handleStates() {
         viewModel.state.bind { state in
-            
             switch state {
             case .searching: self.showSearchingState()
             case .founded: self.showFoundedState()
@@ -59,6 +57,7 @@ class RepositoriesViewController: UIViewController {
     
     private func showFoundedState() {
         handleSpinner(isLoading: false)
+        setNeedsUpdateContentUnavailableConfiguration()
     }
     
     private func handleSpinner(isLoading: Bool) {
@@ -69,12 +68,25 @@ class RepositoriesViewController: UIViewController {
             repoView.spinner.stopAnimating()
             repoView.loadingLabel.isHidden = true
             repoView.tableView.reloadData()
+            setNeedsUpdateContentUnavailableConfiguration()
         }
     }
     
     private func showNotFoundState() {
         presentDSAlert(title: "Ops... algo deu errado!", message: DSError.reposFailed.rawValue)
         handleSpinner(isLoading: false)
+    }
+    
+    override func updateContentUnavailableConfiguration(using state: UIContentUnavailableConfigurationState) {
+        if viewModel.numberOrRowInSection() == 0 && !repoView.spinner.isAnimating {
+            var config = UIContentUnavailableConfiguration.empty()
+            config.image = .init(systemName: "folder")
+            config.text = "Sem Repositórios"
+            config.secondaryText = "Esse usuário ainda não possui nenhum repositório!"
+            contentUnavailableConfiguration = config
+        } else {
+            contentUnavailableConfiguration = nil
+        }
     }
 }
 

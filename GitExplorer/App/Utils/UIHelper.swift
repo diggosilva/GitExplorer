@@ -59,7 +59,7 @@ enum DSViewBuilder {
         return textField
     }
     
-    static func buildButton(title: String, color: UIColor, image: UIImage?, isEnabled: Bool = true, selector: Selector) -> UIButton {
+    static func buildButton(title: String, color: UIColor = .systemGreen, image: UIImage?, isEnabled: Bool = true, selector: Selector) -> UIButton {
         var configuration = UIButton.Configuration.tinted()
         configuration.title = title
         configuration.baseBackgroundColor = color
@@ -85,5 +85,14 @@ enum DSViewBuilder {
         sv.spacing = spacing
         sv.backgroundColor = backgroundColor
         return sv
+    }
+    
+    static func BuildContainerView() -> UIView {
+        let cv = UIView()
+        cv.translatesAutoresizingMaskIntoConstraints = false
+        cv.backgroundColor = .systemBackground
+        cv.layer.cornerRadius = 20
+        cv.clipsToBounds = true
+        return cv
     }
 }
