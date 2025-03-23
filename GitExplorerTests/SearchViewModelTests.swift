@@ -106,7 +106,6 @@ final class GitExplorerTests: XCTestCase {
         XCTAssertEqual(sut.state.value, .founded)
     }
     
-    
     //MARK: TESTS FAILURE
     func testWhenSearchTextIsEmptyIsFailure() {
         let mockService = MockSearch()
