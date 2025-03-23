@@ -42,6 +42,11 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
     }
     
     func fetchRepos() {
+        guard !user.login.isEmpty else {
+            state.value = .notFound
+            return
+        }
+        
         state.value = .searching
         
         service.getRepos(with: user.login) { [weak self] result in
