@@ -100,8 +100,8 @@ final class Service: ServiceProtocol {
                     completion(.success(repos))
                     
                 } catch {
-                    print("DEBUG: Erro de decodificação: \(error.localizedDescription)")
-                    completion(.failure(.invalidData))
+                    print("DEBUG: Erro de decodificação: \(error)")
+//                    completion(.failure(.invalidData))
                 }
             }
         }
