@@ -7,7 +7,7 @@
 
 import Foundation
 
-class User: Codable, CustomStringConvertible {
+class User: Codable {
     let login: String
     let avatarUrl: String
     var name: String?
@@ -34,9 +34,5 @@ class User: Codable, CustomStringConvertible {
         self.followers = followers
         self.following = following
         self.createdAt = createdAt
-    }
-    
-    var description: String {
-        return "User(login: \(login), avatarUrl: \(avatarUrl), name: \(name ?? ""), location: \(location ?? ""), bio: \(bio ?? ""), url: \(url), htmlURL: \(htmlURL), publicRepos: \(publicRepos), publicGists: \(publicGists), followers: \(followers), following: \(following), createdAt: \(createdAt))"
     }
 }
