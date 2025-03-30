@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Repo: Codable, CustomStringConvertible {
+class Repo: Codable {
     let name: String
     let repoDescription: String?
     let createdAt: Date
@@ -22,10 +22,5 @@ class Repo: Codable, CustomStringConvertible {
         self.updatedAt = updatedAt
         self.stargazersCount = stargazersCount
         self.forksCount = forksCount
-    }
-    
-    var description: String {
-        let descriptionText = repoDescription ?? ""
-        return "Repo(name: \(name), description: \(descriptionText), createdAt: \(createdAt), updatedAt: \(updatedAt), stargazersCount: \(stargazersCount), forksCount: \(forksCount))"
     }
 }
