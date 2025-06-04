@@ -6,13 +6,15 @@
 //
 
 import UIKit
+import Combine
 
 class RepositoriesViewController: UIViewController {
     
     let repoView = RepositoriesView()
-    let viewModel: RepositoriesViewModelProtocol
+    let viewModel: any RepositoriesViewModelProtocol
+    private var cancellables = Set<AnyCancellable>()
     
-    init(viewModel: RepositoriesViewModelProtocol) {
+    init(viewModel: any RepositoriesViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -42,13 +44,18 @@ class RepositoriesViewController: UIViewController {
     }
     
     private func handleStates() {
-        viewModel.state.bind { state in
+        viewModel.statePublisher.receive(on: RunLoop.main).sink { [weak self] state in
+            guard let self = self else { return }
+            
             switch state {
-            case .searching: self.showSearchingState()
-            case .founded: self.showFoundedState()
-            case .notFound: self.showNotFoundState()
+            case .searching:
+                self.showSearchingState()
+            case .founded:
+                self.showFoundedState()
+            case .notFound:
+                self.showNotFoundState()
             }
-        }
+        }.store(in: &cancellables)
     }
     
     private func showSearchingState() {

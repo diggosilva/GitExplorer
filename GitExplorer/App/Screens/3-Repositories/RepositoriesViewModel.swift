@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 enum RepositoriesViewControllerStates {
     case searching
@@ -13,18 +14,22 @@ enum RepositoriesViewControllerStates {
     case notFound
 }
 
-protocol RepositoriesViewModelProtocol {
+protocol RepositoriesViewModelProtocol: StatefulViewModel where State == RepositoriesViewControllerStates {
     func numberOrRowInSection() -> Int
     func cellForRow(at indexPath: IndexPath) -> Repo
     func fetchRepos()
-    var state: Bindable<RepositoriesViewControllerStates> { get }
 }
 
 class RepositoriesViewModel: RepositoriesViewModelProtocol {
     
-    var state: Bindable<RepositoriesViewControllerStates> = Bindable(value: .searching)
     var user: User
     var repos: [Repo] = []
+    
+    @Published private var state: RepositoriesViewControllerStates = .searching
+    
+    var statePublisher: AnyPublisher<RepositoriesViewControllerStates, Never> {
+        $state.eraseToAnyPublisher()
+    }
     
     private let service: ServiceProtocol!
     
@@ -43,11 +48,11 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
     
     func fetchRepos() {
         guard !user.login.isEmpty else {
-            state.value = .notFound
+            state = .notFound
             return
         }
         
-        state.value = .searching
+        state = .searching
         
         service.getRepos(with: user.login) { [weak self] result in
             guard let self = self else { return }
@@ -55,11 +60,11 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
             switch result {
             case .success(let repos):
                 self.repos.append(contentsOf: repos)
-                state.value = .founded
+                state = .founded
                 
             case .failure(let error):
                 print("DEBUG: Error: \(error.rawValue)")
-                state.value = .notFound
+                state = .notFound
             }
         }
     }
