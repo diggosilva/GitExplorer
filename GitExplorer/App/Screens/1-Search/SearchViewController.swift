@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import Combine
 
 class SearchViewController: UIViewController {
     
     let searchView = SearchView()
     let viewModel = SearchViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
     override func loadView() {
         super.loadView()
@@ -36,14 +38,15 @@ class SearchViewController: UIViewController {
     }
     
     private func handleStates() {
-        viewModel.state.bind { state in
+        viewModel.statePublisher.receive(on: RunLoop.main).sink { [weak self] state in
+            guard let self = self else { return }
             
             switch state {
             case .searching: self.showSearchingState()
             case .founded: self.showFoundedState()
             case .notFound: self.showNotFoundState()
             }
-        }
+        }.store(in: &cancellables)
     }
     
     private func showSearchingState() {}
