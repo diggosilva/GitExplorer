@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 enum SearchViewControllerStates {
     case searching
@@ -13,18 +14,27 @@ enum SearchViewControllerStates {
     case notFound
 }
 
-protocol SearchViewModelProtocol {
+protocol StatefulViewModel {
+    associatedtype State
+    var statePublisher: AnyPublisher<State, Never> { get }
+}
+
+protocol SearchViewModelProtocol: StatefulViewModel where State == SearchViewControllerStates {
     func searchUser(completion: @escaping(Result<String, DSError>) -> Void)
     func fetchUser(username: String)
 }
 
 class SearchViewModel: SearchViewModelProtocol {
     
-    var state: Bindable<SearchViewControllerStates> = Bindable(value: .searching)
     var searchButtonEnabled: Bool = false
     var user: User?
     
     private let service: ServiceProtocol!
+    @Published private var state: SearchViewControllerStates = .searching
+    
+    var statePublisher: AnyPublisher<SearchViewControllerStates, Never> {
+        $state.eraseToAnyPublisher()
+    }
     
     var searchText: String = "" {
         didSet {
@@ -39,22 +49,22 @@ class SearchViewModel: SearchViewModelProtocol {
     func searchUser(completion: @escaping(Result<String, DSError>) -> Void) {
         if searchText.isEmpty {
             completion(.failure(.invalidSearchEmpty))
-            state.value = .notFound
+            state = .notFound
             return
         }
         
         if searchText.trimmingCharacters(in: .whitespaces).isEmpty {
             completion(.failure(.invalidSearchWhiteSpace))
-            state.value = .notFound
+            state = .notFound
             return
         }
         
         completion(.success("Usuário encontrado!"))
-        state.value = .founded
+        state = .founded
     }
     
     func fetchUser(username: String) {
-        state.value = .searching
+        state = .searching
         
         service.getUser(with: username) { [weak self] result in
             guard let self = self else { return }
@@ -62,11 +72,11 @@ class SearchViewModel: SearchViewModelProtocol {
             switch result {
             case .success(let user):
                 self.user = user
-                self.state.value = .founded
+                self.state = .founded
 
             case .failure(let error):
                 print("DEBUG: Error: \(error.rawValue)")
-                self.state.value = .notFound
+                self.state = .notFound
             }
         }
     }
