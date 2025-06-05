@@ -41,7 +41,7 @@ class SearchViewModel: SearchViewModelProtocol {
             searchButtonEnabled = !searchText.isEmpty
         }
     }
-
+    
     init(service: ServiceProtocol = Service()) {
         self.service = service
     }
@@ -66,16 +66,13 @@ class SearchViewModel: SearchViewModelProtocol {
     func fetchUser(username: String) {
         state = .searching
         
-        service.getUser(with: username) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let user):
+        Task { @MainActor in
+            do {
+                let user = try await service.getUser(with: username)
                 self.user = user
                 self.state = .founded
-
-            case .failure(let error):
-                print("DEBUG: Error: \(error.rawValue)")
+            } catch {
+                print("DEBUG: Error fetching user: \(error.localizedDescription)")
                 self.state = .notFound
             }
         }
