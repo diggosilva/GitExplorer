@@ -54,16 +54,13 @@ class RepositoriesViewModel: RepositoriesViewModelProtocol {
         
         state = .searching
         
-        service.getRepos(with: user.login) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let repos):
+        Task { @MainActor in
+            do {
+                let repos = try await service.getRepos(with: user.login)
                 self.repos.append(contentsOf: repos)
-                state = .founded
-                
-            case .failure(let error):
-                print("DEBUG: Error: \(error.rawValue)")
+                self.state = .founded
+            } catch {
+                print("DEBUG: Error: \(error.localizedDescription)")
                 state = .notFound
             }
         }
