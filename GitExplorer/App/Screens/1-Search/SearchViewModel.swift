@@ -20,7 +20,7 @@ protocol StatefulViewModel {
 }
 
 protocol SearchViewModelProtocol: StatefulViewModel where State == SearchViewControllerStates {
-    func searchUser(completion: @escaping(Result<String, DSError>) -> Void)
+    func searchUserPublisher() -> AnyPublisher<String, DSError>
     func fetchUser(username: String)
 }
 
@@ -46,21 +46,26 @@ class SearchViewModel: SearchViewModelProtocol {
         self.service = service
     }
     
-    func searchUser(completion: @escaping(Result<String, DSError>) -> Void) {
-        if searchText.isEmpty {
-            completion(.failure(.invalidSearchEmpty))
-            state = .notFound
-            return
+    func searchUserPublisher() -> AnyPublisher<String, DSError> {
+        Future { [weak self] promise in
+            guard let self = self else { return }
+            
+            if self.searchText.isEmpty {
+                self.state = .notFound
+                promise(.failure(.invalidSearchEmpty))
+                return
+            }
+            
+            if self.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+                self.state = .notFound
+                promise(.failure(.invalidSearchWhiteSpace))
+                return
+            }
+            
+            self.state = .founded
+            promise(.success("Usuário encontrado!"))
         }
-        
-        if searchText.trimmingCharacters(in: .whitespaces).isEmpty {
-            completion(.failure(.invalidSearchWhiteSpace))
-            state = .notFound
-            return
-        }
-        
-        completion(.success("Usuário encontrado!"))
-        state = .founded
+        .eraseToAnyPublisher()
     }
     
     func fetchUser(username: String) {
