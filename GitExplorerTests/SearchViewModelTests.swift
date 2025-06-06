@@ -6,31 +6,53 @@
 //
 
 import XCTest
+import Combine
 @testable import GitExplorer
 
-class MockSearch: ServiceProtocol {
+class MockService: ServiceProtocol {
     var isSuccess: Bool = true
     
-    func getUser(with username: String, completion: @escaping (Result<User, DSError>) -> Void) {
+    func getUser(with username: String) async throws -> User {
         if isSuccess {
-            completion(.success(User(login: username, avatarUrl: "", url: "", htmlURL: "", publicRepos: 4, publicGists: 3, followers: 2, following: 1, createdAt: Date())))
+            return User(login: username, avatarUrl: "", url: "", htmlURL: "", publicRepos: 4, publicGists: 3, followers: 2, following: 1, createdAt: Date())
         } else {
-            completion(.failure(.invalidUsername))
+            throw DSError.invalidUsername
         }
     }
     
-    func getRepos(with username: String, completion: @escaping (Result<[Repo], DSError>) -> Void) {}
+    func getRepos(with username: String) async throws -> [Repo] { return [] }
 }
 
 final class GitExplorerTests: XCTestCase {
     
-    //MARK: TESTS SUCCESS
-    func testWhenUserIsSuccess() {
-        let mockService = MockSearch()
+    private var cancellables = Set<AnyCancellable>()
+    
+    override func setUp() {
+        super.setUp()
+    }
+    
+    override func tearDown() {
+        cancellables.removeAll()
+        super.tearDown()
+    }
+    
+    func testWhenUserIsSuccess() async throws {
+        let mockService = MockService()
         let sut = SearchViewModel(service: mockService)
+        let expectation = XCTestExpectation(description: "State deveria ser .founded")
         
+        sut.statePublisher
+            .receive(on: RunLoop.main)
+            .sink { state in
+                if state == .founded {
+                    expectation.fulfill()
+                }
+            }.store(in: &cancellables)
+                  
         sut.searchText = "Diggo"
         sut.fetchUser(username: "Diggo")
+        
+        await fulfillment(of: [expectation], timeout: 2.0)
         
         XCTAssertEqual(sut.user?.login, "Diggo")
         XCTAssertEqual(sut.user?.avatarUrl, "")
@@ -38,110 +60,91 @@ final class GitExplorerTests: XCTestCase {
         XCTAssertEqual(sut.user?.publicGists, 3)
         XCTAssertEqual(sut.user?.followers, 2)
         XCTAssertEqual(sut.user?.following, 1)
-        
-        XCTAssertEqual(sut.state.value, .founded)
     }
     
-    func testWhenUserIsSuccessFail() {
-        let mockService = MockSearch()
+    func testWhenUserIsSuccessFail() async throws {
+        let mockService = MockService()
         mockService.isSuccess = false
         
         let sut = SearchViewModel(service: mockService)
+        let expectation = XCTestExpectation(description: "State deveria ser .notFound")
+        
+        sut.statePublisher
+            .receive(on: RunLoop.main)
+            .sink { state in
+                if state == .notFound {
+                    expectation.fulfill()
+                }
+            }.store(in: &cancellables)
         
         sut.searchText = "Diggo"
         sut.fetchUser(username: "Diggo")
+        
+        await fulfillment(of: [expectation], timeout: 2.0)
                 
         XCTAssertNil(sut.user, "Usuário inválido!")
-        
-        XCTAssertEqual(sut.state.value, .notFound)
     }
     
     func testWhenSearchTextIsEmpty() {
-        let mockService = MockSearch()
+        let mockService = MockService()
         let sut = SearchViewModel(service: mockService)
-        
         sut.searchText = ""
         
-        sut.searchUser(completion: { result in
-            switch result {
-            case .success(_):
-                XCTFail("Esperava-se uma falha, mas obteve Sucesso")
-            case .failure(let error):
-                XCTAssertEqual(error, .invalidSearchEmpty)
-            }
-        })
-        XCTAssertEqual(sut.state.value, .notFound)
+        let expectation = XCTestExpectation(description: "Esperava falha por texto vazio")
+
+        sut.searchUserPublisher()
+            .sink(receiveCompletion: { completion in
+                if case let .failure(error) = completion {
+                    XCTAssertEqual(error, .invalidSearchEmpty)
+                    expectation.fulfill()
+                }
+            }, receiveValue: { _ in
+                XCTFail("Não deveria receber sucesso")
+            })
+            .store(in: &cancellables)
+        
+        wait(for: [expectation], timeout: 1)
     }
     
     func testWhenSearchTextHasWhiteSpaces() {
-        let mockService = MockSearch()
+        let mockService = MockService()
         let sut = SearchViewModel(service: mockService)
+        sut.searchText = "   "
         
-        sut.searchText = " "
+        let expectation = XCTestExpectation(description: "Esperava falha por espaços em branco")
+
+        sut.searchUserPublisher()
+            .sink(receiveCompletion: { completion in
+                if case let .failure(error) = completion {
+                    XCTAssertEqual(error, .invalidSearchWhiteSpace)
+                    expectation.fulfill()
+                }
+            }, receiveValue: { _ in
+                XCTFail("Não deveria receber sucesso")
+            })
+            .store(in: &cancellables)
         
-        sut.searchUser { result in
-            switch result {
-            case .success(_):
-                XCTFail("Esperava-se uma falha, mas obteve Sucesso")
-            case .failure(let error):
-                XCTAssertEqual(error, .invalidSearchWhiteSpace)
-            }
-        }
-        XCTAssertEqual(sut.state.value, .notFound)
+        wait(for: [expectation], timeout: 1)
     }
     
     func testWhenSearchTextIsSuccess() {
-        let mockService = MockSearch()
+        let mockService = MockService()
         let sut = SearchViewModel(service: mockService)
-        
         sut.searchText = "Diggo"
         
-        sut.searchUser { result in
-            switch result {
-            case .success(let username):
-                XCTAssertEqual(username, "Usuário encontrado!")
-            case .failure: break
-            }
-        }
-        XCTAssertEqual(sut.state.value, .founded)
-    }
-    
-    //MARK: TESTS FAILURE
-    func testWhenSearchTextIsEmptyIsFailure() {
-        let mockService = MockSearch()
-        mockService.isSuccess = false
+        let expectation = XCTestExpectation(description: "Esperava sucesso na busca")
+
+        sut.searchUserPublisher()
+            .sink(receiveCompletion: { completion in
+                if case .failure = completion {
+                    XCTFail("Esperava sucesso, mas obteve falha")
+                }
+            }, receiveValue: { result in
+                XCTAssertEqual(result, "Usuário encontrado!")
+                expectation.fulfill()
+            })
+            .store(in: &cancellables)
         
-        let sut = SearchViewModel(service: mockService)
-        
-        sut.searchText = ""
-        
-        sut.searchUser { result in
-            switch result {
-            case .success(_):
-                XCTFail("Esperava-se uma falha, mas obteve Sucesso")
-            case .failure(let error):
-                XCTAssertEqual(error, .invalidSearchEmpty)
-            }
-        }
-        XCTAssertEqual(sut.state.value, .notFound)
-    }
-    
-    func testWhenSearchTextHasWhiteSpacesIsFailure() {
-        let mockService = MockSearch()
-        mockService.isSuccess = false
-        
-        let sut = SearchViewModel(service: mockService)
-        
-        sut.searchText = " "
-        
-        sut.searchUser { result in
-            switch result {
-            case .success(_):
-                XCTFail("Esperava-se uma falha, mas obteve Sucesso")
-            case .failure(let error):
-                XCTAssertEqual(error, .invalidSearchWhiteSpace)
-            }
-        }
-        XCTAssertEqual(sut.state.value, .notFound)
+        wait(for: [expectation], timeout: 1)
     }
 }
