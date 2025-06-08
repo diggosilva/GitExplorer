@@ -23,8 +23,11 @@ A Swift iOS Git Explorer app. An application built solely for study purposes. Th
 
 - View Code (UIKit)
 - Modern TableView
+- MVVM with Combine
+- Await/Async Request
 - Custom elements
 - Dark Mode
+- Unit tests
 
 ## Requirements
 
