@@ -9,32 +9,13 @@ import XCTest
 import Combine
 @testable import GitExplorer
 
-class MockServiceRepositories: ServiceProtocol {
-    var isSuccess: Bool = true
-    
-    func getUser(with username: String) async throws -> User {
-        return User(login: "", avatarUrl: "", url: "", htmlURL: "", publicRepos: 0, publicGists: 0, followers: 0, following: 0, createdAt: Date())
-    }
-    
-    func getRepos(with username: String) async throws -> [Repo] {
-        if isSuccess {
-            return [
-                Repo(name: "FirstRepo", repoDescription: nil, createdAt: Date(), updatedAt: Date(), stargazersCount: 4, forksCount: 3),
-                Repo(name: "SecondRepo", repoDescription: nil, createdAt: Date(), updatedAt: Date(), stargazersCount: 2, forksCount: 1)
-            ]
-        } else {
-            throw DSError.reposFailed
-        }
-    }
-}
-
 final class RepositoriesViewModelTests: XCTestCase {
     
     private var cancellables = Set<AnyCancellable>()
 
     //MARK: TESTS SUCCESS
     func testWhenGetReposIsCalledWithSuccessShouldReturnRepos() async throws {
-        let mockService = MockServiceRepositories()
+        let mockService = MockService()
         
         let user = User(login: "Diggo", avatarUrl: "", url: "", htmlURL: "", publicRepos: 4, publicGists: 3, followers: 2, following: 1, createdAt: Date())
         
@@ -60,7 +41,7 @@ final class RepositoriesViewModelTests: XCTestCase {
     }
     
     func testWhenGetReposIsCalledWithFailureDueToEmptyLoginShouldReturnEmptyArray() async throws {
-        let mockService = MockServiceRepositories()
+        let mockService = MockService()
         
         let user = User(login: "", avatarUrl: "", url: "", htmlURL: "", publicRepos: 0, publicGists: 0, followers: 0, following: 0, createdAt: Date())
         
@@ -85,7 +66,7 @@ final class RepositoriesViewModelTests: XCTestCase {
     
     //MARK: TESTS FAILURE
     func testWhenGetReposIsCalledWithSuccessAndThenFailShouldReturnEmptyArray() async throws {
-        let mockService = MockServiceRepositories()
+        let mockService = MockService()
         mockService.isSuccess = false
         
         let user = User(login: "Diggo", avatarUrl: "", url: "", htmlURL: "", publicRepos: 0, publicGists: 0, followers: 0, following: 0, createdAt: Date())
