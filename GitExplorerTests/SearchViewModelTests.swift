@@ -9,20 +9,6 @@ import XCTest
 import Combine
 @testable import GitExplorer
 
-class MockService: ServiceProtocol {
-    var isSuccess: Bool = true
-    
-    func getUser(with username: String) async throws -> User {
-        if isSuccess {
-            return User(login: username, avatarUrl: "", url: "", htmlURL: "", publicRepos: 4, publicGists: 3, followers: 2, following: 1, createdAt: Date())
-        } else {
-            throw DSError.invalidUsername
-        }
-    }
-    
-    func getRepos(with username: String) async throws -> [Repo] { return [] }
-}
-
 final class GitExplorerTests: XCTestCase {
     
     private var cancellables = Set<AnyCancellable>()

@@ -9,7 +9,7 @@ import XCTest
 import Combine
 @testable import GitExplorer
 
-class Mock: ServiceProtocol {
+class MockService: ServiceProtocol {
     
     var isSuccess: Bool = true
     
